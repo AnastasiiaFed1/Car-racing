@@ -15,3 +15,9 @@ class Obstacle:
         else:
             # Інше (наприклад, конус): ширина 30, висота 30
             self.rect = pygame.Rect(x, y, 30, 30)
+
+    def update(self, dt):
+        self.rect.y += self.speed * dt # Оновлюємо позицію перешкоди, рухаючи її вниз по екрану зі швидкістю, залежною від часу (dt)
+
+    def is_off_screen(self, screen_height):
+        return self.rect.y > screen_height # Перевіряємо, чи перешкода вийшла за межі екрану (тобто, якщо її верхня межа (y) перевищує висоту екрану)
