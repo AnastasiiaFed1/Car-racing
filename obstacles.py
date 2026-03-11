@@ -29,9 +29,22 @@ class Spawner:
         self.spawn_timer = 0
 
     def spawn(self, screen_width):
-        #Створює одну перешкоду у випадковому місці
+        #Створює одну перешкоду у випадковому місці по горизонталі, з випадковим типом та швидкістю
+        # Випадкова позиція по горизонталі
         x = random.randint(100, screen_width - 100)
-        y = -100
-        speed = 250  # Поки що фіксована швидкість
-        new_obs = Obstacle(x, y, speed, "car")
-        self.obstacles.append(new_obs)
+        y = -100 
+        
+        # Випадковий вибір типу перешкоди
+        obs_type = random.choice(["car", "cone"])
+        
+        # Визначаємо швидкість руху об'єкта відносно гравця
+        if obs_type == "car":
+            # Машини їдуть швидше
+            speed = random.randint(350, 500)
+        else:
+            # Конуси просто "стоять", тому наближаються зі швидкістю дороги
+            speed = 200 
+            
+        # Створюємо об'єкт і додаємо в список
+        new_obstacle = Obstacle(x, y, speed, obs_type)
+        self.obstacles.append(new_obstacle)
