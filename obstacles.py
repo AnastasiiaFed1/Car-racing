@@ -48,3 +48,20 @@ class Spawner:
         # Створюємо об'єкт і додаємо в список
         new_obstacle = Obstacle(x, y, speed, obs_type)
         self.obstacles.append(new_obstacle)
+
+    def update(self, dt, screen_height, screen_width):
+        # 1. Накопичуємо час
+        self.spawn_timer += dt
+        
+        # 2. Якщо пройшло більше 1.2 сек — створюємо нову перешкоду
+        if self.spawn_timer >= 1.2:
+            self.spawn(screen_width)
+            self.spawn_timer = 0 # Скидаємо таймер
+            
+        # 3. Проходимо по кожній перешкоді (використовуємо зріз [:] для безпечного видалення)
+        for obstacle in self.obstacles[:]:
+            obstacle.update(dt) # Викликаємо метод руху самої перешкоди
+            
+            # 4. Якщо перешкода виїхала за екран — видаляємо її зі списку
+            if obstacle.is_off_screen(screen_height):
+                self.obstacles.remove(obstacle)
