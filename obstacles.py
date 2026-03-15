@@ -2,20 +2,38 @@ import pygame
 import random
 
 class Obstacle:
+  class Obstacle:
     def __init__(self, x, y, speed, obs_type):
-        # Зберігаємо параметри у властивості об'єкта (self)
-        self.x = x
-        self.y = y
         self.speed = speed
         self.obs_type = obs_type
 
-        # Створюємо прямокутник (rect) залежно від типу перешкоди
+        # Створюємо прямокутник
         if self.obs_type == "car":
-            # Машина: ширина 50, висота 80
             self.rect = pygame.Rect(x, y, 50, 80)
+            # Спробуємо завантажити картинку, якщо її немає — залишиться колір
+            try:
+                self.image = pygame.image.load("assets/car_red.png")
+                self.image = pygame.transform.scale(self.image, (50, 80))
+            except:
+                self.image = None
         else:
-            # Інше (конус): ширина 30, висота 30
             self.rect = pygame.Rect(x, y, 30, 30)
+            try:
+                self.image = pygame.image.load("assets/cone.png")
+                self.image = pygame.transform.scale(self.image, (30, 30))
+            except:
+                self.image = None
+
+    def draw(self, surface):
+        if self.image:
+            # Малюємо картинку
+            surface.blit(self.image, self.rect)
+        else:
+            # Резервний варіант (якщо файл картинки не знайдено)
+            color = (200, 0, 0) if self.obs_type == "car" else (255, 165, 0)
+            pygame.draw.rect(surface, color, self.rect)
+            
+    # Методи update та is_off_screen залишаються без змін
 
     def update(self, dt):
         self.rect.y += self.speed * dt # Оновлюємо позицію перешкоди, рухаючи її вниз по екрану зі швидкістю, залежною від часу (dt)
