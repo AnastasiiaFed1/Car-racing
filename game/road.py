@@ -3,11 +3,7 @@ import pygame
 
 class Road:
     """
-    Road renders:
-    - grass background
-    - asphalt road rectangle
-    - borders
-    - dashed lane separators that scroll down
+    Draws the racing road, lane borders, and scrolling dashed separators.
     """
 
     def __init__(
@@ -19,7 +15,7 @@ class Road:
         border_width: int = 4,
         dash_len: int = 28,
         dash_gap: int = 22,
-        scroll_multiplier: float = 1.0,
+        scroll_multiplier: float = 6.0,
     ):
         self.screen_w = screen_w
         self.screen_h = screen_h
@@ -33,41 +29,44 @@ class Road:
         self.dash_len = dash_len
         self.dash_gap = dash_gap
         self.scroll_multiplier = scroll_multiplier
-
         self._offset_y = 0.0
 
-        # colors (simple defaults)
-        self._grass = (18, 90, 28)
+        self._grass = (20, 120, 35)
         self._asphalt = (48, 48, 54)
-        self._border = (235, 235, 235)
-        self._dash = (220, 220, 220)
+        self._border = (245, 245, 245)
+        self._dash = (225, 225, 225)
+        self._shoulder = (180, 180, 180)
+
+    @property
+    def lane_width(self) -> float:
+        return self.road_w / self.lane_count
+
+    def get_lane_center_x(self, lane_index: int) -> int:
+        lane_index = max(0, min(self.lane_count - 1, lane_index))
+        return int(self.road_x + self.lane_width * lane_index + self.lane_width / 2)
 
     def update(self, dt: float, speed: float):
-        """
-        dt: seconds since last frame
-        speed: game speed (any unit). Used to scroll the dashed lines.
-        """
         step = float(speed) * float(self.scroll_multiplier) * float(dt)
         period = self.dash_len + self.dash_gap
         self._offset_y = (self._offset_y + step) % period
 
     def draw(self, surface: pygame.Surface):
-        # grass
         surface.fill(self._grass)
-
-        # asphalt
         pygame.draw.rect(surface, self._asphalt, self.road_rect)
 
-        # borders
+        shoulder_w = 10
+        left_shoulder = pygame.Rect(self.road_x, 0, shoulder_w, self.screen_h)
+        right_shoulder = pygame.Rect(self.road_x + self.road_w - shoulder_w, 0, shoulder_w, self.screen_h)
+        pygame.draw.rect(surface, self._shoulder, left_shoulder)
+        pygame.draw.rect(surface, self._shoulder, right_shoulder)
+
         left_x = self.road_x
         right_x = self.road_x + self.road_w
         pygame.draw.line(surface, self._border, (left_x, 0), (left_x, self.screen_h), self.border_width)
         pygame.draw.line(surface, self._border, (right_x, 0), (right_x, self.screen_h), self.border_width)
 
-        # lane dashed lines
-        lane_w = self.road_w / self.lane_count
         for i in range(1, self.lane_count):
-            x = int(self.road_x + lane_w * i)
+            x = int(self.road_x + self.lane_width * i)
             self._draw_dashed_vertical(surface, x)
 
     def _draw_dashed_vertical(self, surface: pygame.Surface, x: int):
