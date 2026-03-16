@@ -55,26 +55,24 @@ class Spawner:
         self.obstacles = []
         self.spawn_timer = 0
         self.game_time = 0       # Загальний час гри
-        self.base_speed = 200     # Початкова швидкість для конусів (і база для машин)
+        self.base_speed = 200     # Початкова швидкість для конусів
 
     def spawn(self, screen_width):
-        #Створює одну перешкоду у випадковому місці по горизонталі, з випадковим типом та швидкістю
-        # Випадкова позиція по горизонталі
-        x = random.randint(100, screen_width - 100)
-        y = -100 
+      # 1. Визначаємо координати центрів смуг
+        lanes = [200, 350, 500, 650] 
         
-        # Випадковий вибір типу перешкоди
+        # 2. Випадково обираємо одну смугу зі списку
+        x = random.choice(lanes)
+        y = -100
+        
         obs_type = random.choice(["car", "cone"])
         
-        # Визначаємо швидкість руху об'єкта відносно гравця
+        # Використовуємо твою логіку швидкості з попереднього кроку
         if obs_type == "car":
-            # Машини їдуть швидше
             speed = self.base_speed + random.randint(150, 300)
         else:
-            # Конуси просто "стоять", тому наближаються зі швидкістю дороги
             speed = self.base_speed
             
-        # Створюємо об'єкт і додаємо в список
         new_obstacle = Obstacle(x, y, speed, obs_type)
         self.obstacles.append(new_obstacle)
 
@@ -83,7 +81,7 @@ class Spawner:
         self.spawn_timer += dt
         self.game_time += dt
         
-        # 2. Після 10 секунд починаємо поступово збільшувати швидкість руху перешкод (і, відповідно, складність гри)
+        # 2. Після 10 секунд починаємо поступово збільшувати швидкість руху перешкод
         if self.game_time > 10:
             self.base_speed += 0.1  # Невеличке постійне прискорення кожного кадру після 10 сек
             self.base_speed = min(self.base_speed, 500)  # Обмежуємо максимальну швидкість
@@ -93,7 +91,7 @@ class Spawner:
             self.spawn(screen_width)
             self.spawn_timer = 0 # Скидаємо таймер
             
-        # 4. Проходимо по кожній перешкоді (використовуємо зріз [:] для безпечного видалення)
+        # 4. Проходимо по кожній перешкоді 
         for obstacle in self.obstacles[:]:
             obstacle.update(dt) # Виклик методу руху самої перешкоди
             
