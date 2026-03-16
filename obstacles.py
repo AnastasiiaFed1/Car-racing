@@ -54,6 +54,8 @@ class Spawner:
     def __init__(self):
         self.obstacles = []
         self.spawn_timer = 0
+        self.game_time = 0       # Загальний час гри
+        self.base_speed = 200     # Початкова швидкість для конусів (і база для машин)
 
     def spawn(self, screen_width):
         #Створює одну перешкоду у випадковому місці по горизонталі, з випадковим типом та швидкістю
@@ -67,10 +69,10 @@ class Spawner:
         # Визначаємо швидкість руху об'єкта відносно гравця
         if obs_type == "car":
             # Машини їдуть швидше
-            speed = random.randint(350, 500)
+            speed = self.base_speed + random.randint(150, 300)
         else:
             # Конуси просто "стоять", тому наближаються зі швидкістю дороги
-            speed = 200 
+            speed = self.base_speed
             
         # Створюємо об'єкт і додаємо в список
         new_obstacle = Obstacle(x, y, speed, obs_type)
@@ -79,17 +81,23 @@ class Spawner:
     def update(self, dt, screen_height, screen_width):
         # 1. Накопичуємо час
         self.spawn_timer += dt
+        self.game_time += dt
         
-        # 2. Якщо пройшло більше 1.2 сек — створюємо нову перешкоду
+        # 2. Після 10 секунд починаємо поступово збільшувати швидкість руху перешкод (і, відповідно, складність гри)
+        if self.game_time > 10:
+            self.base_speed += 0.1  # Невеличке постійне прискорення кожного кадру після 10 сек
+            self.base_speed = min(self.base_speed, 500)  # Обмежуємо максимальну швидкість
+
+        # 3. Якщо пройшло більше 1.2 сек — створюємо нову перешкоду
         if self.spawn_timer >= 1.2:
             self.spawn(screen_width)
             self.spawn_timer = 0 # Скидаємо таймер
             
-        # 3. Проходимо по кожній перешкоді (використовуємо зріз [:] для безпечного видалення)
+        # 4. Проходимо по кожній перешкоді (використовуємо зріз [:] для безпечного видалення)
         for obstacle in self.obstacles[:]:
-            obstacle.update(dt) # Викликаємо метод руху самої перешкоди
+            obstacle.update(dt) # Виклик методу руху самої перешкоди
             
-            # 4. Якщо перешкода виїхала за екран — видаляємо її зі списку
+            # 5. Якщо перешкода виїхала за екран — видаляємо її зі списку
             if obstacle.is_off_screen(screen_height):
                 self.obstacles.remove(obstacle)
 
