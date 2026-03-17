@@ -49,6 +49,9 @@ class Obstacle:
             
         pygame.draw.rect(surface, color, self.rect)
     
+    def check_collision(self, player_rect):
+        #Перевіряє, чи перешкода зіткнулася з гравцем
+        return self.rect.colliderect(player_rect)
 
 class Spawner:
     def __init__(self):
@@ -102,3 +105,11 @@ class Spawner:
     def draw(self, surface):
         for obstacle in self.obstacles:
             obstacle.draw(surface)
+
+    def check_all_collisions(self, player_rect):
+        #Перевіряє зіткнення гравця з УСІМА активними перешкодами.
+        #Повертає True, якщо сталася хоч одна аварія.
+        for obstacle in self.obstacles:
+            if obstacle.check_collision(player_rect):
+                return True
+        return False
