@@ -40,6 +40,7 @@ class PlayerCar():
         
         self.rect.x = start_x
         self.rect.y = start_y
-
-player = PlayerCar(100, 200, 5)
-print(player.rect)  
+        
+class Obstacle:
+    def init(self, x, y, width, height):
+        self.rect = pygame.Rect(x, y, width, height)
