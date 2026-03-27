@@ -35,6 +35,11 @@ class PlayerCar():
             print(self.rect)
 
         self.rect.y = max(upper_bound, min(self.rect.y, bottom_bound - self.rect.height))
+    
+    def reset(self, start_x, start_y):
+        
+        self.rect.x = start_x
+        self.rect.y = start_y
 
 player = PlayerCar(100, 200, 5)
 print(player.rect)  
