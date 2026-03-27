@@ -11,6 +11,11 @@ class PlayerCar():
     
     def handle_input(self):
 
+        left_bound = 0
+        right_bound = 800
+        upper_bound = 0
+        bottom_bound = 600
+
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_LEFT]:
@@ -19,12 +24,17 @@ class PlayerCar():
         if keys[pygame.K_RIGHT]:
             self.rect.x += 10
             print(self.rect)
+        
+        self.rect.x = max(left_bound, min(self.rect.x, right_bound - self.rect.width))
+
         if keys[pygame.K_UP]:
             self.rect.y -= self.speed
             print(self.rect)
         if keys[pygame.K_DOWN]:
             self.rect.y += self.speed
             print(self.rect)
+
+        self.rect.y = max(upper_bound, min(self.rect.y, bottom_bound - self.rect.height))
 
 player = PlayerCar(100, 200, 5)
 print(player.rect)  
