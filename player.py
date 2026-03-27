@@ -49,28 +49,3 @@ class PlayerCar():
     
     def draw(self, screen):
         pygame.draw.rect(screen, (255, 0, 0), self.rect)
-
-pygame.init()
-
-screen = pygame.display.set_mode((800, 600))
-pygame.display.set_caption("Car Racing")
-
-player = PlayerCar(100, 200, 5)
-
-running = True
-while running:
-    screen.fill((0, 0, 0))
-
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-
-    player.handle_input()
-
-    player.draw(screen)
-
-    pygame.display.flip()
-
-    pygame.time.Clock().tick(60)
-
-pygame.quit()
