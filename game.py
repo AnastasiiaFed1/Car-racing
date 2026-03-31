@@ -127,3 +127,13 @@ class Game:
             self.draw_game_over()
 
         pygame.display.flip()
+
+    def run(self):
+        while self.running:
+            dt = self.clock.tick(FPS) / 1000
+
+            self.handle_events()
+            self.update(dt)
+            self.draw()
+
+        pygame.quit()
