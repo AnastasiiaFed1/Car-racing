@@ -49,3 +49,27 @@ class Game:
 
     def game_over(self):
         self.state = GameState.GAME_OVER
+
+    def handle_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+
+            if event.type == pygame.KEYDOWN:
+                if self.state == GameState.MENU:
+                    if event.key == pygame.K_SPACE:
+                        self.start_game()
+                    elif event.key == pygame.K_ESCAPE:
+                        self.running = False
+
+                elif self.state == GameState.PLAY:
+                    if event.key == pygame.K_ESCAPE:
+                        self.running = False
+
+                elif self.state == GameState.GAME_OVER:
+                    if event.key == pygame.K_r:
+                        self.restart()
+                    elif event.key == pygame.K_m:
+                        self.back_to_menu()
+                    elif event.key == pygame.K_ESCAPE:
+                        self.running = False
