@@ -73,7 +73,7 @@ class Game:
                         self.back_to_menu()
                     elif event.key == pygame.K_ESCAPE:
                         self.running = False
-                        
+
     def update(self, dt):
         if self.state != GameState.PLAY:
             return
@@ -87,3 +87,43 @@ class Game:
 
         if self.obstacles.check_collision(self.player):
             self.game_over()
+    def draw_menu(self):
+        title = self.font.render("CAR RACING", True, TEXT_COLOR)
+        text = self.small_font.render("SPACE - start   ESC - quit", True, TEXT_COLOR)
+
+        self.screen.blit(title, (SCREEN_W // 2 - title.get_width() // 2, 200))
+        self.screen.blit(text, (SCREEN_W // 2 - text.get_width() // 2, 280))
+
+    def draw_game_over(self):
+        title = self.font.render("GAME OVER", True, TEXT_COLOR)
+        score_text = self.small_font.render(f"Score: {self.score}", True, TEXT_COLOR)
+        info = self.small_font.render("R - restart   M - menu   ESC - quit", True, TEXT_COLOR)
+
+        self.screen.blit(title, (SCREEN_W // 2 - title.get_width() // 2, 200))
+        self.screen.blit(score_text, (SCREEN_W // 2 - score_text.get_width() // 2, 260))
+        self.screen.blit(info, (SCREEN_W // 2 - info.get_width() // 2, 320))
+
+    def draw_play(self):
+        self.road.draw(self.screen)
+        self.player.draw(self.screen)
+        self.obstacles.draw(self.screen)
+
+        score_text = self.small_font.render(f"Time: {self.score}", True, TEXT_COLOR)
+        self.screen.blit(score_text, (20, 20))
+
+    def draw(self):
+        self.screen.fill(BG_COLOR)
+
+        if self.state == GameState.MENU:
+            self.draw_menu()
+
+        elif self.state == GameState.PLAY:
+            self.draw_play()
+
+        elif self.state == GameState.GAME_OVER:
+            self.road.draw(self.screen)
+            self.player.draw(self.screen)
+            self.obstacles.draw(self.screen)
+            self.draw_game_over()
+
+        pygame.display.flip()
