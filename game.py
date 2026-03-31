@@ -28,3 +28,24 @@ class Game:
         self.player = PlayerCar()
         self.obstacles = ObstacleManager()
         self.ui = UI()
+
+    def reset(self, to_menu=False):
+        self.score = 0
+        self.time_score = 0.0
+
+        self.player.reset()
+        self.obstacles.reset()
+
+        self.state = GameState.MENU if to_menu else GameState.PLAY
+
+    def start_game(self):
+        self.reset(to_menu=False)
+
+    def restart(self):
+        self.reset(to_menu=False)
+
+    def back_to_menu(self):
+        self.reset(to_menu=True)
+
+    def game_over(self):
+        self.state = GameState.GAME_OVER
