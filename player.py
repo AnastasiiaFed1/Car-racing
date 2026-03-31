@@ -6,46 +6,34 @@ class PlayerCar():
 
         self.rect = pygame.Rect(x, y, 50, 100)
         self.speed = speed
-        self.hitbox = self.rect.inflate(-10, -10)
-        self.image = pygame.Surface((50, 100))
     
-    def handle_input(self):
-
-        left_bound = 0
-        right_bound = 800
-        upper_bound = 0
-        bottom_bound = 600
+    def handle_input(self, left_bound, right_bound):
 
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_LEFT]:
             self.rect.x -= 10
-            print(self.rect)
         if keys[pygame.K_RIGHT]:
             self.rect.x += 10
-            print(self.rect)
         
         self.rect.x = max(left_bound, min(self.rect.x, right_bound - self.rect.width))
-
-        if keys[pygame.K_UP]:
-            self.rect.y -= self.speed
-            print(self.rect)
-        if keys[pygame.K_DOWN]:
-            self.rect.y += self.speed
-            print(self.rect)
-
-        self.rect.y = max(upper_bound, min(self.rect.y, bottom_bound - self.rect.height))
     
     def reset(self, start_x, start_y):
         
         self.rect.x = start_x
         self.rect.y = start_y
     
-    def check_collision(self, obstacles):
-        for obstacle in obstacles:
-            if self.rect.colliderect(obstacle.rect):
-                return True
-        return False
-    
     def draw(self, screen):
-        pygame.draw.rect(screen, (255, 0, 0), self.rect)
+        body = self.rect
+
+        pygame.draw.rect(screen, (70, 130, 255), body, border_radius=10)
+
+        window = pygame.Rect(body.x + 10, body.y + 12, body.w - 20, body.h // 4)
+        pygame.draw.rect(screen, (210, 235, 255), window, border_radius=6)
+
+        pygame.draw.rect(screen, (25, 25, 25), (body.x + 7, body.y + 16, 8, 18), border_radius=3)
+        pygame.draw.rect(screen, (25, 25, 25), (body.right - 15, body.y + 16, 8, 18), border_radius=3)
+        pygame.draw.rect(screen, (25, 25, 25), (body.x + 7, body.bottom - 34, 8, 18), border_radius=3)
+        pygame.draw.rect(screen, (25, 25, 25), (body.right - 15, body.bottom - 34, 8, 18), border_radius=3)
+
+        pygame.draw.rect(screen, (255, 255, 255), body, 2, border_radius=10)
