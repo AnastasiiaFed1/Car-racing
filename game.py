@@ -73,3 +73,17 @@ class Game:
                         self.back_to_menu()
                     elif event.key == pygame.K_ESCAPE:
                         self.running = False
+                        
+    def update(self, dt):
+        if self.state != GameState.PLAY:
+            return
+
+        self.time_score += dt
+        self.score = int(self.time_score)
+
+        self.road.update(dt)
+        self.player.update(dt)
+        self.obstacles.update(dt)
+
+        if self.obstacles.check_collision(self.player):
+            self.game_over()
