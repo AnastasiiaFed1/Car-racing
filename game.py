@@ -1,12 +1,12 @@
 import pygame
 
 from settings import SCREEN_W, SCREEN_H, FPS, BG_COLOR, TEXT_COLOR
-from state import GameState
+from game.state import GameState
 
-# from player import PlayerCar
-# from obstacles import ObstacleManager
-# from road import Road
-# from ui import UI
+from player import PlayerCar
+from obstacles import Obstacle
+from game.road import Road
+from game.ui import UI
 
 class Game:
     def __init__(self):
@@ -26,7 +26,7 @@ class Game:
 
         self.road = Road()
         self.player = PlayerCar()
-        self.obstacles = ObstacleManager()
+        self.obstacles = Obstacle()
         self.ui = UI()
 
     def reset(self, to_menu=False):

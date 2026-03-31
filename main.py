@@ -5,13 +5,11 @@ from dataclasses import dataclass
 
 import pygame
 
+from settings import SCREEN_W, SCREEN_H, FPS
 from game.road import Road
 from game.state import GameState
 from game.ui import UI
 
-SCREEN_W = 800
-SCREEN_H = 600
-FPS = 60
 PLAYER_W = 56
 PLAYER_H = 100
 ENEMY_W = 56
