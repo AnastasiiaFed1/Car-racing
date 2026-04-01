@@ -81,7 +81,7 @@ class Spawner:
         
         obs_type = random.choice(["car", "cone"])
         
-        # Використовуємо твою логіку швидкості з попереднього кроку
+        # Використовуємо логіку швидкості з попереднього кроку
         if obs_type == "car":
             speed = self.base_speed + random.randint(150, 300)
         else:
