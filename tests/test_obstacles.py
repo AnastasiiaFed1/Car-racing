@@ -4,7 +4,7 @@ import pygame
 from src.obstacles import Obstacle, Spawner
 
 
-# Фікстура для pygame (щоб Rect працював)
+
 @pytest.fixture(autouse=True)
 def init_pygame():
     pygame.init()
@@ -12,7 +12,7 @@ def init_pygame():
     pygame.quit()
 
 
-# 🔹 Fake road (бо у тебе є road.get_lane_center_x)
+#  Fake road 
 class FakeRoad:
     lane_count = 3
 
