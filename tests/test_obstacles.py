@@ -1,7 +1,7 @@
 import pytest
 import pygame
 
-from src.obstacles import Obstacle, Spawner
+from obstacles import Obstacle, Spawner
 
 
 
