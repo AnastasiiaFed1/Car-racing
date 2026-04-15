@@ -30,6 +30,7 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=100 --statistics
 
     - name: Run Tests (Pytest)
+     env:
+        PYTHONPATH: .  
       run: |
-        # Запуск тестів Діани та створення звіту
         pytest --html=report.html --self-contained-html
