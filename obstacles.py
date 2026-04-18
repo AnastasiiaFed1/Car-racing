@@ -2,7 +2,6 @@ import pygame
 import random
 
 class Obstacle:
-  class Obstacle:
     def __init__(self, x, y, speed, obs_type):
         self.speed = speed
         self.obs_type = obs_type
@@ -10,30 +9,45 @@ class Obstacle:
         # Створюємо прямокутник
         if self.obs_type == "car":
             self.rect = pygame.Rect(x, y, 50, 80)
-            # Спробуємо завантажити картинку, якщо її немає — залишиться колір
-            try:
-                self.image = pygame.image.load("assets/car_red.png")
-                self.image = pygame.transform.scale(self.image, (50, 80))
-            except:
-                self.image = None
         else:
             self.rect = pygame.Rect(x, y, 30, 30)
-            try:
-                self.image = pygame.image.load("assets/cone.png")
-                self.image = pygame.transform.scale(self.image, (30, 30))
-            except:
-                self.image = None
 
     def draw(self, surface):
-        if self.image:
-            # Малюємо картинку
-            surface.blit(self.image, self.rect)
-        else:
-            # Резервний варіант (якщо файл картинки не знайдено)
-            color = (200, 0, 0) if self.obs_type == "car" else (255, 165, 0)
-            pygame.draw.rect(surface, color, self.rect)
-            
-    # Методи update та is_off_screen залишаються без змін
+        if self.obs_type == "car":
+            body = self.rect
+
+            pygame.draw.rect(surface, (200, 40, 40), body, border_radius=10)
+
+            window = pygame.Rect(body.x + 8, body.y + 10, body.w - 16, body.h // 4)
+            pygame.draw.rect(surface, (210, 235, 255), window, border_radius=6)
+
+            pygame.draw.rect(surface, (25, 25, 25), (body.x + 5, body.y + 14, 8, 16), border_radius=3)
+            pygame.draw.rect(surface, (25, 25, 25), (body.right - 13, body.y + 14, 8, 16), border_radius=3)
+            pygame.draw.rect(surface, (25, 25, 25), (body.x + 5, body.bottom - 30, 8, 16), border_radius=3)
+            pygame.draw.rect(surface, (25, 25, 25), (body.right - 13, body.bottom - 30, 8, 16), border_radius=3)
+
+        elif self.obs_type == "cone":
+            body = self.rect
+
+            # Трикутник
+            points = [
+                (body.centerx, body.top),
+                (body.left, body.bottom - 4),
+                (body.right, body.bottom - 4),
+            ]
+            pygame.draw.polygon(surface, (255, 140, 0), points)
+
+            # Світла смуга
+            stripe = [
+                (body.centerx, body.top + 8),
+                (body.left + 6, body.bottom - 14),
+                (body.right - 6, body.bottom - 14),
+            ]
+            pygame.draw.polygon(surface, (255, 230, 180), stripe)
+
+            # Основа
+            base_rect = pygame.Rect(body.left - 2, body.bottom - 6, body.width + 4, 6)
+            pygame.draw.rect(surface, (210, 210, 210), base_rect, border_radius=2)    
 
     def update(self, dt):
         self.rect.y += self.speed * dt # Оновлюємо позицію перешкоди, рухаючи її вниз по екрану зі швидкістю, залежною від часу (dt)
@@ -41,36 +55,33 @@ class Obstacle:
     def is_off_screen(self, screen_height):
         return self.rect.y > screen_height # Перевіряємо, чи перешкода вийшла за межі екрану (тобто, якщо її верхня межа (y) перевищує висоту екрану)
     
-    def draw(self, surface):
-        if self.obs_type == "car":
-            color = (200, 0, 0)  # Червоний для машин
-        else:
-            color = (255, 165, 0)  # Помаранчевий для конусів
-            
-        pygame.draw.rect(surface, color, self.rect)
-    
     def check_collision(self, player_rect):
         #Перевіряє, чи перешкода зіткнулася з гравцем
         return self.rect.colliderect(player_rect)
 
 class Spawner:
-    def __init__(self):
+    def __init__(self, road):
         self.obstacles = []
         self.spawn_timer = 0
         self.game_time = 0       # Загальний час гри
         self.base_speed = 200     # Початкова швидкість для конусів
+        self.road = road
+
+    def reset(self):
+        self.obstacles = []
+        self.spawn_timer = 0
+        self.game_time = 0 
+        self.base_speed = 200
 
     def spawn(self, screen_width):
       # 1. Визначаємо координати центрів смуг
-        lanes = [200, 350, 500, 650] 
-        
-        # 2. Випадково обираємо одну смугу зі списку
-        x = random.choice(lanes)
+        lane = random.randint(0, self.road.lane_count - 1)
+        x = self.road.get_lane_center_x(lane) - 25
         y = -100
         
         obs_type = random.choice(["car", "cone"])
         
-        # Використовуємо твою логіку швидкості з попереднього кроку
+        # Використовуємо логіку швидкості з попереднього кроку
         if obs_type == "car":
             speed = self.base_speed + random.randint(150, 300)
         else:
@@ -83,6 +94,7 @@ class Spawner:
         # 1. Накопичуємо час
         self.spawn_timer += dt
         self.game_time += dt
+        removed_count = 0
         
         # 2. Після 10 секунд починаємо поступово збільшувати швидкість руху перешкод
         if self.game_time > 10:
@@ -101,6 +113,9 @@ class Spawner:
             # 5. Якщо перешкода виїхала за екран — видаляємо її зі списку
             if obstacle.is_off_screen(screen_height):
                 self.obstacles.remove(obstacle)
+                removed_count += 1
+        
+        return removed_count
 
     def draw(self, surface):
         for obstacle in self.obstacles:
