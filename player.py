@@ -1,12 +1,13 @@
 import pygame
 
+
 class PlayerCar():
 
-    def __init__(self, x, y, speed : int):
+    def __init__(self, x, y, speed: int):
 
         self.rect = pygame.Rect(x, y, 50, 100)
         self.speed = speed
-    
+
     def handle_input(self, left_bound, right_bound):
 
         keys = pygame.key.get_pressed()
@@ -15,14 +16,14 @@ class PlayerCar():
             self.rect.x -= 10
         if keys[pygame.K_RIGHT]:
             self.rect.x += 10
-        
+
         self.rect.x = max(left_bound, min(self.rect.x, right_bound - self.rect.width))
-    
+
     def reset(self, start_x, start_y):
-        
+
         self.rect.x = start_x
         self.rect.y = start_y
-    
+
     def draw(self, screen):
         body = self.rect
 

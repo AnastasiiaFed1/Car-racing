@@ -1,9 +1,9 @@
+from player import PlayerCar
+import pytest
+import pygame
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-import pygame
-import pytest
-from player import PlayerCar
 
 
 @pytest.fixture

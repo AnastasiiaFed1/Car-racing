@@ -1,6 +1,7 @@
 import pygame
 import random
 
+
 class Obstacle:
     def __init__(self, x, y, speed, obs_type):
         self.speed = speed
@@ -47,17 +48,20 @@ class Obstacle:
 
             # Основа
             base_rect = pygame.Rect(body.left - 2, body.bottom - 6, body.width + 4, 6)
-            pygame.draw.rect(surface, (210, 210, 210), base_rect, border_radius=2)    
+            pygame.draw.rect(surface, (210, 210, 210), base_rect, border_radius=2)
 
     def update(self, dt):
-        self.rect.y += self.speed * dt # Оновлюємо позицію перешкоди, рухаючи її вниз по екрану зі швидкістю, залежною від часу (dt)
+        # Оновлюємо позицію перешкоди, рухаючи її вниз по екрану зі швидкістю, залежною від часу (dt)
+        self.rect.y += self.speed * dt
 
     def is_off_screen(self, screen_height):
-        return self.rect.y > screen_height # Перевіряємо, чи перешкода вийшла за межі екрану (тобто, якщо її верхня межа (y) перевищує висоту екрану)
-    
+        # Перевіряємо, чи перешкода вийшла за межі екрану (тобто, якщо її верхня межа (y) перевищує висоту екрану)
+        return self.rect.y > screen_height
+
     def check_collision(self, player_rect):
-        #Перевіряє, чи перешкода зіткнулася з гравцем
+        # Перевіряє, чи перешкода зіткнулася з гравцем
         return self.rect.colliderect(player_rect)
+
 
 class Spawner:
     def __init__(self, road):
@@ -70,23 +74,22 @@ class Spawner:
     def reset(self):
         self.obstacles = []
         self.spawn_timer = 0
-        self.game_time = 0 
+        self.game_time = 0
         self.base_speed = 200
 
-    def spawn(self, screen_width):
-      # 1. Визначаємо координати центрів смуг
+    def spawn(self):
+        # 1. Визначаємо координати центрів смуг
         lane = random.randint(0, self.road.lane_count - 1)
         x = self.road.get_lane_center_x(lane) - 25
         y = -100
-        
+
         obs_type = random.choice(["car", "cone"])
-        
-        # Використовуємо логіку швидкості з попереднього кроку
+
         if obs_type == "car":
             speed = self.base_speed + random.randint(150, 300)
         else:
             speed = self.base_speed
-            
+
         new_obstacle = Obstacle(x, y, speed, obs_type)
         self.obstacles.append(new_obstacle)
 
@@ -95,26 +98,26 @@ class Spawner:
         self.spawn_timer += dt
         self.game_time += dt
         removed_count = 0
-        
+
         # 2. Після 10 секунд починаємо поступово збільшувати швидкість руху перешкод
         if self.game_time > 10:
-            self.base_speed += 0.1  # Невеличке постійне прискорення кожного кадру після 10 сек
-            self.base_speed = min(self.base_speed, 500)  # Обмежуємо максимальну швидкість
+            self.base_speed += 0.1    # Невеличке постійне прискорення кожного кадру після 10 сек
+            self.base_speed = min(self.base_speed, 500)    # Обмежуємо максимальну швидкість
 
         # 3. Якщо пройшло більше 1.2 сек — створюємо нову перешкоду
         if self.spawn_timer >= 1.2:
             self.spawn(screen_width)
-            self.spawn_timer = 0 # Скидаємо таймер
-            
-        # 4. Проходимо по кожній перешкоді 
+            self.spawn_timer = 0    # Скидаємо таймер
+
+        # 4. Проходимо по кожній перешкоді
         for obstacle in self.obstacles[:]:
-            obstacle.update(dt) # Виклик методу руху самої перешкоди
-            
+            obstacle.update(dt)  # Виклик методу руху самої перешкоди
+
             # 5. Якщо перешкода виїхала за екран — видаляємо її зі списку
             if obstacle.is_off_screen(screen_height):
                 self.obstacles.remove(obstacle)
                 removed_count += 1
-        
+
         return removed_count
 
     def draw(self, surface):
@@ -122,8 +125,8 @@ class Spawner:
             obstacle.draw(surface)
 
     def check_all_collisions(self, player_rect):
-        #Перевіряє зіткнення гравця з УСІМА активними перешкодами.
-        #Повертає True, якщо сталася хоч одна аварія.
+        # Перевіряє зіткнення гравця з УСІМА активними перешкодами.
+        # Повертає True, якщо сталася хоч одна аварія.
         for obstacle in self.obstacles:
             if obstacle.check_collision(player_rect):
                 return True

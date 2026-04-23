@@ -12,6 +12,7 @@ from game.ui import UI
 PLAYER_W = 56
 PLAYER_H = 100
 
+
 class CarRacingGame:
     def __init__(self):
         pygame.init()
