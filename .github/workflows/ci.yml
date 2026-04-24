@@ -2,9 +2,8 @@ name: Car Racing CI
 
 on:
   push:
-    branches: [ "anastasiia", "main" ]
+  
   pull_request:
-    branches: [ "main" ]
 
 jobs:
   test-and-lint:
@@ -33,4 +32,3 @@ jobs:
           PYTHONPATH: .
         run: |
           pytest --html=report.html --self-contained-html
-          
