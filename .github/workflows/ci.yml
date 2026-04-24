@@ -35,3 +35,9 @@ jobs:
     - name: Run flake8
       run: |
         flake8
+
+    - name: Run Tests (Pytest)
+      env:
+        PYTHONPATH: .
+      run: |
+        pytest --html=report.html --self-contained-html
