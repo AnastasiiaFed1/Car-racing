@@ -33,3 +33,10 @@ jobs:
           PYTHONPATH: .
         run: |
           pytest --html=report.html --self-contained-html
+
+      - name: Upload Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: report.html
