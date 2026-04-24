@@ -77,7 +77,7 @@ class Spawner:
         self.game_time = 0
         self.base_speed = 200
 
-    def spawn(self):
+    def spawn(self, screen_width):
         # 1. Визначаємо координати центрів смуг
         lane = random.randint(0, self.road.lane_count - 1)
         x = self.road.get_lane_center_x(lane) - 25

@@ -1,8 +1,7 @@
 import pytest
 import pygame
 
-from src.obstacles import Obstacle, Spawner
-
+from obstacles import Obstacle, Spawner
 
 
 @pytest.fixture(autouse=True)
@@ -12,7 +11,7 @@ def init_pygame():
     pygame.quit()
 
 
-#  Fake road 
+#  Fake road
 class FakeRoad:
     lane_count = 3
 
